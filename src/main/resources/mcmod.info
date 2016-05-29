@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ubercore",
+  "name": "UberCore",
+  "description": "Library for Uberverse projects",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["LewisMcReu"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
