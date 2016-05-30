@@ -18,6 +18,9 @@
 
 package com.minecraftuberverse.ubercore.tileentity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.minecraftuberverse.ubercore.util.DurationRecipe;
 import com.minecraftuberverse.ubercore.util.Recipe;
 import com.minecraftuberverse.ubercore.util.RecipeHandler;
@@ -30,25 +33,30 @@ import net.minecraft.tileentity.TileEntity;
  * @author Lewis_McReu
  */
 public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox {
-	private static RecipeHandler<DurationRecipe> recipeHandler;
+	private static Map<String, RecipeHandler<Recipe>> recipeHandlers = new HashMap<>();
 
-	public static RecipeHandler getRecipeHandler() {
-		return recipeHandler;
+	public static RecipeHandler<Recipe> getRecipeHandler(String key) {
+		return recipeHandlers.get(key);
 	}
 
-	public static int getInputStackLimit() {
-		return recipeHandler.getInputStackLimit();
+	public static int getInputStackLimit(String key) {
+		return recipeHandlers.get(key).getInputStackLimit();
 	}
 
-	public static int getOutputStackLimit() {
-		return recipeHandler.getOutputStackLimit();
+	public static int getOutputStackLimit(String key) {
+		return recipeHandlers.get(key).getInputStackLimit();
 	}
 
-	public static void init(int inputStackLimit, int outputStackLimit) {
-		recipeHandler = new RecipeHandler<>(inputStackLimit, outputStackLimit);
+	public static RecipeHandler<Recipe> init(String key, int inputStackLimit, int outputStackLimit) {
+		RecipeHandler<Recipe> recipeHandler = new RecipeHandler<>(inputStackLimit, outputStackLimit);
+		RecipeHandler<Recipe> r = recipeHandlers.putIfAbsent(key, recipeHandler);
+		if (r == null)
+			return recipeHandler;
+		else
+			return null;
 	}
 
-	private DurationRecipe activeRecipe;
+	private Recipe activeRecipe;
 
 	private int timeLeft;
 
@@ -65,7 +73,7 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 *            the stack to add to the inventory
 	 */
 	public void addInput(ItemStack stack) {
-		if (recipeHandler.isValidInput(stack))
+		if (getRecipeHandler(getRecipeHandlerKey()).isValidInput(stack))
 			insertItemStackIntoInventory(stack);
 	}
 
@@ -116,9 +124,9 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * duration
 	 */
 	private void selectActiveRecipe() {
-		activeRecipe = recipeHandler.getMatchingRecipe(getInput());
-		if (hasActiveRecipe())
-			timeLeft = activeRecipe.getDuration();
+		activeRecipe = getRecipeHandler(getRecipeHandlerKey()).getMatchingRecipe(getInput());
+		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe)
+			timeLeft = ((DurationRecipe) activeRecipe).getDuration();
 	}
 
 	public boolean hasActiveRecipe() {
@@ -130,7 +138,7 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 		if (!hasActiveRecipe())
 			selectActiveRecipe();
 
-		if (hasActiveRecipe() && !ready) {
+		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe && !ready) {
 			if (!activeRecipe.containsRequiredInput(getInput())) {
 				activeRecipe = null;
 				timeLeft = 0;
@@ -151,4 +159,13 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	protected void setReady(boolean ready) {
 		this.ready = ready;
 	}
+
+	/**
+	 * This method must return a value if you wish to make use of the provided
+	 * functionality
+	 * 
+	 * @return the key used for the recipe handler of any instances of the
+	 *         actual type
+	 */
+	protected abstract String getRecipeHandlerKey();
 }
