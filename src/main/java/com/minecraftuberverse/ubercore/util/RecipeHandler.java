@@ -20,55 +20,57 @@ package com.minecraftuberverse.ubercore.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class RecipeHandler<E extends Recipe>
-{
+public class RecipeHandler<E extends Recipe> {
 	private Collection<E> recipes;
 
-	public RecipeHandler()
-	{
+	private final int inputStackLimit;
+	private final int outputStackLimit;
+
+	public RecipeHandler(int inputStackLimit, int outputStackLimit) {
 		recipes = new ArrayList<>();
+		this.inputStackLimit = inputStackLimit;
+		this.outputStackLimit = outputStackLimit;
 	}
 
-	public void register(E recipe)
-	{
+	public int getInputStackLimit() {
+		return inputStackLimit;
+	}
+
+	public int getOutputStackLimit() {
+		return outputStackLimit;
+	}
+
+	public void register(E recipe) {
+		if (recipe.getOutputAsItemStacks().length > outputStackLimit
+				|| recipe.getInputAsItemStacks().length > inputStackLimit)
+			return;
 		recipes.add(recipe);
 	}
 
-	public E getMatchingRecipe(ItemStack... itemStacks)
-	{
-		Map<Item, Integer> items = new HashMap<>();
-		for (ItemStack stack : itemStacks)
-		{
-			Item item = stack.getItem();
-			int count = stack.stackSize;
-			if (!items.containsKey(item)) items.put(item, count);
-			else items.put(item, items.get(item) + count);
-		}
+	public E getMatchingRecipe(ItemStack... itemStacks) {
+		Map<Item, Integer> items = Recipe.convertItemStacksToMap(itemStacks);
 
-		for (E recipe : recipes)
-		{
-			if (recipe.containsRequiredInput(items)) return recipe;
+		for (E recipe : recipes) {
+			if (recipe.containsRequiredInput(items))
+				return recipe;
 		}
 		return null;
 	}
 
-	public boolean hasMatchingRecipe(ItemStack... itemStacks)
-	{
+	public boolean hasMatchingRecipe(ItemStack... itemStacks) {
 		return this.getMatchingRecipe(itemStacks) != null;
 	}
 
-	public boolean isValidInput(ItemStack stack)
-	{
+	public boolean isValidInput(ItemStack stack) {
 		Item item = stack.getItem();
-		for (E e : recipes)
-		{
-			if (e.isValidInput(item)) return true;
+		for (E e : recipes) {
+			if (e.isValidInput(item))
+				return true;
 		}
 		return false;
 	}

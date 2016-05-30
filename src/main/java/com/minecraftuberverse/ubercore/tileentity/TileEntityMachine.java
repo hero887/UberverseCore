@@ -26,13 +26,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox
-{
-	private static RecipeHandler<DurationRecipe> recipeHandler = new RecipeHandler<>();
+/**
+ * @author Lewis_McReu
+ */
+public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox {
+	private static RecipeHandler<DurationRecipe> recipeHandler;
 
-	public static RecipeHandler recipeHandler()
-	{
+	public static RecipeHandler getRecipeHandler() {
 		return recipeHandler;
+	}
+
+	public static int getInputStackLimit() {
+		return recipeHandler.getInputStackLimit();
+	}
+
+	public static int getOutputStackLimit() {
+		return recipeHandler.getOutputStackLimit();
+	}
+
+	public static void init(int inputStackLimit, int outputStackLimit) {
+		recipeHandler = new RecipeHandler<>(inputStackLimit, outputStackLimit);
 	}
 
 	private DurationRecipe activeRecipe;
@@ -51,9 +64,9 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * @param stack
 	 *            the stack to add to the inventory
 	 */
-	public void addInput(ItemStack stack)
-	{
-		if (recipeHandler.isValidInput(stack)) insertItemStackIntoInventory(stack);
+	public void addInput(ItemStack stack) {
+		if (recipeHandler.isValidInput(stack))
+			insertItemStackIntoInventory(stack);
 	}
 
 	/**
@@ -83,64 +96,59 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * @return the output of the active recipe, if there is one and if the
 	 *         recipe is done, otherwise returns null
 	 */
-	public ItemStack[] getOutput()
-	{
-		if (ready)
-		{
+	public ItemStack[] getOutput() {
+		if (ready) {
 			ready = false;
 			return activeRecipe != null ? activeRecipe.getOutputAsItemStacks() : null;
-		}
-		else return null;
+		} else
+			return null;
 	}
 
-	public Recipe getActiveRecipe()
-	{
+	public abstract void setOutput(ItemStack[] itemStacks);
+
+	public Recipe getActiveRecipe() {
 		return activeRecipe;
 	}
 
 	/**
-	 * Finds a possible recipe within the available inputs and stores it in {@link #activeRecipe}
-	 * Also sets {@link #timeLeft} to the recipes' duration
+	 * Finds a possible recipe within the available inputs and stores it in
+	 * {@link #activeRecipe} Also sets {@link #timeLeft} to the recipes'
+	 * duration
 	 */
-	private void selectActiveRecipe()
-	{
+	private void selectActiveRecipe() {
 		activeRecipe = recipeHandler.getMatchingRecipe(getInput());
-		timeLeft = activeRecipe.getDuration();
+		if (hasActiveRecipe())
+			timeLeft = activeRecipe.getDuration();
 	}
 
-	public boolean hasActiveRecipe()
-	{
+	public boolean hasActiveRecipe() {
 		return activeRecipe != null;
 	}
 
 	@Override
-	public void update()
-	{
-		if (!hasActiveRecipe()) selectActiveRecipe();
+	public void update() {
+		if (!hasActiveRecipe())
+			selectActiveRecipe();
 
-		if (hasActiveRecipe() && !ready)
-		{
-			if (recipeHandler.getMatchingRecipe(getInput()) != activeRecipe)
-			{
+		if (hasActiveRecipe() && !ready) {
+			if (!activeRecipe.containsRequiredInput(getInput())) {
 				activeRecipe = null;
 				timeLeft = 0;
 				return;
 			}
-			if (timeLeft <= 0)
-			{
+			if (timeLeft <= 0) {
 				ready = true;
-			}
-			else timeLeft--;
+				setOutput(activeRecipe.getOutputAsItemStacks());
+			} else
+				timeLeft--;
 		}
 	}
 
-	public boolean isReady()
-	{
+	public boolean isReady() {
 		return ready;
 	}
 
-	protected void setReady(boolean ready)
-	{
+	protected void setReady(boolean ready) {
 		this.ready = ready;
 	}
 }
