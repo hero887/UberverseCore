@@ -1,5 +1,5 @@
 /*******************************************************************************
- * UberCore - A modification of Minecraft created with Minecraft Forge serving as a library for other mods
+ * UberCore - A modification of Minecraft(R) created with Minecraft Forge(R) serving as a library for other modifications
  * Copyright (C) 2016  Wim Creuwels, a.k.a. Lewis_McReu and contributors
  *
  * This program is free software: you can redistribute it and/or modify
