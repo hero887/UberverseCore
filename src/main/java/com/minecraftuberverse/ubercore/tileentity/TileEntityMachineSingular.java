@@ -1,6 +1,7 @@
 package com.minecraftuberverse.ubercore.tileentity;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * This class provides an implementation for the case where the tile entity only
@@ -11,6 +12,8 @@ import net.minecraft.item.ItemStack;
  */
 public abstract class TileEntityMachineSingular extends TileEntityMachine
 {
+	public static final String NBTKEY_CONTENT = "content";
+
 	private ItemStack content = null;
 
 	private ItemStack getContent()
@@ -55,5 +58,19 @@ public abstract class TileEntityMachineSingular extends TileEntityMachine
 	public ItemStack[] removeOutput()
 	{
 		return removeInput();
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound compound)
+	{
+		super.writeToNBT(compound);
+		compound.setTag(NBTKEY_CONTENT, content.writeToNBT(new NBTTagCompound()));
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound)
+	{
+		super.readFromNBT(compound);
+		this.content = ItemStack.loadItemStackFromNBT(compound.getCompoundTag(NBTKEY_CONTENT));
 	}
 }

@@ -26,6 +26,7 @@ import com.minecraftuberverse.ubercore.util.Recipe;
 import com.minecraftuberverse.ubercore.util.RecipeHandler;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 
@@ -34,6 +35,8 @@ import net.minecraft.tileentity.TileEntity;
  */
 public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox
 {
+	private static final String NBTKEY_PROGRESS = "progress";
+
 	private static Map<String, RecipeHandler<Recipe>> recipeHandlers = new HashMap<>();
 
 	public static RecipeHandler<Recipe> getRecipeHandler(String key)
@@ -186,4 +189,18 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 *         actual type
 	 */
 	protected abstract String getRecipeHandlerKey();
+
+	@Override
+	public void writeToNBT(NBTTagCompound compound)
+	{
+		super.writeToNBT(compound);
+		compound.setInteger(NBTKEY_PROGRESS, timeLeft);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound)
+	{
+		super.readFromNBT(compound);
+		this.timeLeft = compound.getInteger(NBTKEY_PROGRESS);
+	}
 }
