@@ -105,6 +105,8 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	public abstract ItemStack[] removeInput();
 
 	/**
+	 * This method returns whatever the output of the active recipe would be, it
+	 * doesn't actually remove anything from the inventory
 	 * 
 	 * @return the output of the active recipe, if there is one and if the
 	 *         recipe is done, otherwise returns null
@@ -120,6 +122,8 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	}
 
 	public abstract void setOutput(ItemStack[] itemStacks);
+
+	public abstract ItemStack[] removeOutput();
 
 	public Recipe getActiveRecipe()
 	{
