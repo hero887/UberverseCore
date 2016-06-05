@@ -16,7 +16,7 @@ public abstract class TileEntityMachineSingular extends TileEntityMachine
 
 	private ItemStack content = null;
 
-	private ItemStack getContent()
+	public ItemStack getContent()
 	{
 		return content;
 	}
