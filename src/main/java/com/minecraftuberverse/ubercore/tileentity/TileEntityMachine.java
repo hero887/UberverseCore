@@ -32,28 +32,32 @@ import net.minecraft.tileentity.TileEntity;
 /**
  * @author Lewis_McReu
  */
-public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox {
+public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox
+{
 	private static Map<String, RecipeHandler<Recipe>> recipeHandlers = new HashMap<>();
 
-	public static RecipeHandler<Recipe> getRecipeHandler(String key) {
+	public static RecipeHandler<Recipe> getRecipeHandler(String key)
+	{
 		return recipeHandlers.get(key);
 	}
 
-	public static int getInputStackLimit(String key) {
+	public static int getInputStackLimit(String key)
+	{
 		return recipeHandlers.get(key).getInputStackLimit();
 	}
 
-	public static int getOutputStackLimit(String key) {
+	public static int getOutputStackLimit(String key)
+	{
 		return recipeHandlers.get(key).getInputStackLimit();
 	}
 
-	public static RecipeHandler<Recipe> init(String key, int inputStackLimit, int outputStackLimit) {
-		RecipeHandler<Recipe> recipeHandler = new RecipeHandler<>(inputStackLimit, outputStackLimit);
+	public static RecipeHandler<Recipe> registerMachine(String key, int inputStackLimit, int outputStackLimit)
+	{
+		RecipeHandler<Recipe> recipeHandler = new RecipeHandler<>(inputStackLimit,
+				outputStackLimit);
 		RecipeHandler<Recipe> r = recipeHandlers.putIfAbsent(key, recipeHandler);
-		if (r == null)
-			return recipeHandler;
-		else
-			return null;
+		if (r == null) return recipeHandler;
+		else return null;
 	}
 
 	private Recipe activeRecipe;
@@ -72,9 +76,10 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * @param stack
 	 *            the stack to add to the inventory
 	 */
-	public void addInput(ItemStack stack) {
-		if (getRecipeHandler(getRecipeHandlerKey()).isValidInput(stack))
-			insertItemStackIntoInventory(stack);
+	public void addInput(ItemStack stack)
+	{
+		if (getRecipeHandler(getRecipeHandlerKey())
+				.isValidInput(stack)) insertItemStackIntoInventory(stack);
 	}
 
 	/**
@@ -84,7 +89,7 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * @param stack
 	 *            the stack to insert into the inventory
 	 */
-	protected abstract void insertItemStackIntoInventory(ItemStack stack);
+	protected abstract boolean insertItemStackIntoInventory(ItemStack stack);
 
 	/**
 	 * @return the itemstacks currently in the inventory but doesn't remove them
@@ -104,17 +109,20 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * @return the output of the active recipe, if there is one and if the
 	 *         recipe is done, otherwise returns null
 	 */
-	public ItemStack[] getOutput() {
-		if (ready) {
+	public ItemStack[] getOutput()
+	{
+		if (ready)
+		{
 			ready = false;
 			return activeRecipe != null ? activeRecipe.getOutputAsItemStacks() : null;
-		} else
-			return null;
+		}
+		else return null;
 	}
 
 	public abstract void setOutput(ItemStack[] itemStacks);
 
-	public Recipe getActiveRecipe() {
+	public Recipe getActiveRecipe()
+	{
 		return activeRecipe;
 	}
 
@@ -123,40 +131,46 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * {@link #activeRecipe} Also sets {@link #timeLeft} to the recipes'
 	 * duration
 	 */
-	private void selectActiveRecipe() {
+	private void selectActiveRecipe()
+	{
 		activeRecipe = getRecipeHandler(getRecipeHandlerKey()).getMatchingRecipe(getInput());
-		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe)
-			timeLeft = ((DurationRecipe) activeRecipe).getDuration();
+		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe) timeLeft = ((DurationRecipe) activeRecipe)
+				.getDuration();
 	}
 
-	public boolean hasActiveRecipe() {
+	public boolean hasActiveRecipe()
+	{
 		return activeRecipe != null;
 	}
 
 	@Override
-	public void update() {
-		if (!hasActiveRecipe())
-			selectActiveRecipe();
-
-		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe && !ready) {
-			if (!activeRecipe.containsRequiredInput(getInput())) {
-				activeRecipe = null;
-				timeLeft = 0;
-				return;
-			}
-			if (timeLeft <= 0) {
+	public void update()
+	{
+		if (!ready && !hasActiveRecipe()) selectActiveRecipe();
+		if (hasActiveRecipe() && !activeRecipe.containsRequiredInput(getInput()))
+		{
+			activeRecipe = null;
+			timeLeft = 0;
+			return;
+		}
+		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe && !ready)
+		{
+			if (timeLeft <= 0)
+			{
 				ready = true;
 				setOutput(activeRecipe.getOutputAsItemStacks());
-			} else
-				timeLeft--;
+			}
+			else timeLeft--;
 		}
 	}
 
-	public boolean isReady() {
+	public boolean isReady()
+	{
 		return ready;
 	}
 
-	protected void setReady(boolean ready) {
+	protected void setReady(boolean ready)
+	{
 		this.ready = ready;
 	}
 
