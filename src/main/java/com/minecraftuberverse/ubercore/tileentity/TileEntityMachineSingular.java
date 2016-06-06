@@ -64,7 +64,8 @@ public abstract class TileEntityMachineSingular extends TileEntityMachine
 	public void writeToNBT(NBTTagCompound compound)
 	{
 		super.writeToNBT(compound);
-		compound.setTag(NBTKEY_CONTENT, content.writeToNBT(new NBTTagCompound()));
+		if (content != null) compound.setTag(NBTKEY_CONTENT,
+				content.writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override

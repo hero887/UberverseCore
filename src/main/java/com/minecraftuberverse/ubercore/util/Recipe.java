@@ -35,127 +35,147 @@ import net.minecraft.item.ItemStack;
  * @author Lewis_McReu
  *
  */
-public class Recipe {
+public class Recipe
+{
 	private Map<Item, Integer> input;
 	private Map<Item, Integer> output;
 
-	public Recipe() {
+	public Recipe()
+	{
 		this.input = new HashMap<>();
 		this.output = new HashMap<>();
 	}
 
-	public Recipe(Item input, Item output) {
+	public Recipe(Item input, Item output)
+	{
 		this();
 		addInput(input);
 		addOutput(output);
 	}
 
-	public Recipe(Item[] input, Item output) {
+	public Recipe(Item[] input, Item output)
+	{
 		this();
 		addInput(input);
 		addOutput(output);
 	}
 
-	public Recipe(Item input, Item[] output) {
+	public Recipe(Item input, Item[] output)
+	{
 		this();
 		addInput(input);
 		addOutput(output);
 	}
 
-	public Recipe(Item[] input, Item[] output) {
+	public Recipe(Item[] input, Item[] output)
+	{
 		this();
 		addInput(input);
 		addOutput(output);
 	}
 
-	public Recipe addInput(Item... items) {
-		for (Item item : items) {
-			if (!input.containsKey(item))
-				input.put(item, 1);
-			else
-				input.put(item, input.get(item) + 1);
+	public Recipe addInput(Item... items)
+	{
+		for (Item item : items)
+		{
+			if (!input.containsKey(item)) input.put(item, 1);
+			else input.put(item, input.get(item) + 1);
 		}
 		return this;
 	}
 
-	public Recipe addOutput(Item... items) {
-		for (Item item : items) {
-			if (!output.containsKey(item))
-				output.put(item, 1);
-			else
-				output.put(item, output.get(item) + 1);
+	public Recipe addOutput(Item... items)
+	{
+		for (Item item : items)
+		{
+			if (!output.containsKey(item)) output.put(item, 1);
+			else output.put(item, output.get(item) + 1);
 		}
 		return this;
 	}
 
-	public boolean isValidInput(Item item) {
+	public boolean isValidInput(Item item)
+	{
 		return input.containsKey(item);
 	}
 
-	public boolean containsRequiredInput(Map<Item, Integer> items) {
-		if (items.size() < input.size())
-			return false;
-		for (Entry<Item, Integer> item : items.entrySet()) {
-			if (!input.containsKey(item.getKey()) || input.get(item.getKey()) > item.getValue())
-				return false;
+	public boolean containsRequiredInput(Map<Item, Integer> items)
+	{
+		if (items.size() < input.size()) return false;
+		for (Entry<Item, Integer> item : items.entrySet())
+		{
+			if (!input.containsKey(item.getKey()) || input.get(item.getKey()) > item
+					.getValue()) return false;
 		}
 
 		return true;
 	}
 
-	public boolean containsRequiredInput(ItemStack[] itemStacks) {
+	public boolean containsRequiredInput(ItemStack[] itemStacks)
+	{
 		Map<Item, Integer> items = convertItemStacksToMap(itemStacks);
-		if (items.size() < input.size())
-			return false;
-		for (Entry<Item, Integer> item : items.entrySet()) {
-			if (!input.containsKey(item.getKey()) || input.get(item.getKey()) > item.getValue())
-				return false;
+		if (items.size() < input.size()) return false;
+		for (Entry<Item, Integer> item : items.entrySet())
+		{
+			if (!input.containsKey(item.getKey()) || input.get(item.getKey()) > item
+					.getValue()) return false;
 		}
 
 		return true;
 	}
 
-	public static Map<Item, Integer> convertItemStacksToMap(ItemStack[] itemStacks) {
+	public static Map<Item, Integer> convertItemStacksToMap(ItemStack[] itemStacks)
+	{
 		Map<Item, Integer> items = new HashMap<>();
-		for (ItemStack stack : itemStacks) {
-			Item item = stack.getItem();
-			int count = stack.stackSize;
-			if (!items.containsKey(item))
-				items.put(item, count);
-			else
-				items.put(item, items.get(item) + count);
+		for (ItemStack stack : itemStacks)
+		{
+			if (stack != null)
+			{
+				Item item = stack.getItem();
+				int count = stack.stackSize;
+				if (!items.containsKey(item)) items.put(item, count);
+				else items.put(item, items.get(item) + count);
+			}
 		}
 		return items;
 	}
 
-	public ItemStack[] getInputAsItemStacks() {
+	public ItemStack[] getInputAsItemStacks()
+	{
 		Collection<ItemStack> out = new ArrayList<>();
-		for (Entry<Item, Integer> e : input.entrySet()) {
+		for (Entry<Item, Integer> e : input.entrySet())
+		{
 			Item item = e.getKey();
 			int count = e.getValue();
 			ItemStack dummy = new ItemStack(item);
-			while (count > item.getItemStackLimit(dummy)) {
+			while (count > item.getItemStackLimit(dummy))
+			{
 				count -= item.getItemStackLimit(dummy);
 				out.add(new ItemStack(item, item.getItemStackLimit(dummy)));
 			}
-			if (count > 0) {
+			if (count > 0)
+			{
 				out.add(new ItemStack(item, count));
 			}
 		}
 		return out.toArray(new ItemStack[0]);
 	}
 
-	public ItemStack[] getOutputAsItemStacks() {
+	public ItemStack[] getOutputAsItemStacks()
+	{
 		Collection<ItemStack> out = new ArrayList<>();
-		for (Entry<Item, Integer> e : output.entrySet()) {
+		for (Entry<Item, Integer> e : output.entrySet())
+		{
 			Item item = e.getKey();
 			int count = e.getValue();
 			ItemStack dummy = new ItemStack(item);
-			while (count > item.getItemStackLimit(dummy)) {
+			while (count > item.getItemStackLimit(dummy))
+			{
 				count -= item.getItemStackLimit(dummy);
 				out.add(new ItemStack(item, item.getItemStackLimit(dummy)));
 			}
-			if (count > 0) {
+			if (count > 0)
+			{
 				out.add(new ItemStack(item, count));
 			}
 		}
