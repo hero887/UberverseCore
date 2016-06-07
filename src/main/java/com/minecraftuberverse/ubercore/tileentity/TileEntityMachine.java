@@ -35,9 +35,9 @@ import net.minecraft.tileentity.TileEntity;
  */
 public abstract class TileEntityMachine extends TileEntity implements IUpdatePlayerListBox
 {
-	private static final String NBTKEY_PROGRESS = "progress";
+	public static final String NBTKEY_PROGRESS = "progress";
 
-	private static Map<String, RecipeHandler<Recipe>> recipeHandlers = new HashMap<>();
+	private static final Map<String, RecipeHandler<Recipe>> recipeHandlers = new HashMap<>();
 
 	public static RecipeHandler<Recipe> getRecipeHandler(String key)
 	{
@@ -138,7 +138,7 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 	 * {@link #activeRecipe} Also sets {@link #timeLeft} to the recipes'
 	 * duration
 	 */
-	private void selectActiveRecipe()
+	protected final void selectActiveRecipe()
 	{
 		activeRecipe = getRecipeHandler(getRecipeHandlerKey()).getMatchingRecipe(getInput());
 		if (hasActiveRecipe() && activeRecipe instanceof DurationRecipe) timeLeft = ((DurationRecipe) activeRecipe)
