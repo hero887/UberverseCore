@@ -1,5 +1,7 @@
 package com.minecraftuberverse.ubercore.tileentity;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -10,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author Lewis_McReu
  *
  */
-public abstract class TileEntityMachineSingular extends TileEntityMachine
+public abstract class TileEntityMachineSingular extends TileEntityMachine implements IInventory
 {
 	public static final String NBTKEY_CONTENT = "content";
 
@@ -21,7 +23,7 @@ public abstract class TileEntityMachineSingular extends TileEntityMachine
 		return content;
 	}
 
-	private void setContent(ItemStack stack)
+	protected void setContent(ItemStack stack)
 	{
 		content = stack;
 	}
@@ -73,5 +75,72 @@ public abstract class TileEntityMachineSingular extends TileEntityMachine
 	{
 		super.readFromNBT(compound);
 		this.content = ItemStack.loadItemStackFromNBT(compound.getCompoundTag(NBTKEY_CONTENT));
+	}
+
+	public int getSizeInventory()
+	{
+		return 1;
+	}
+
+	public ItemStack getStackInSlot(int index)
+	{
+		return content;
+	}
+
+	public ItemStack decrStackSize(int index, int count)
+	{
+		return null;
+	}
+
+	public ItemStack getStackInSlotOnClosing(int index)
+	{
+		return null;
+	}
+
+	public void setInventorySlotContents(int index, ItemStack stack)
+	{
+		content = stack;
+	}
+
+	public int getInventoryStackLimit()
+	{
+		return 1;
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer player)
+	{
+		return false;
+	}
+
+	public void openInventory(EntityPlayer player)
+	{
+	}
+
+	public void closeInventory(EntityPlayer player)
+	{
+	}
+
+	public boolean isItemValidForSlot(int index, ItemStack stack)
+	{
+		return getRecipeHandler(getRecipeHandlerKey()).isValidInput(stack);
+	}
+
+	public int getField(int id)
+	{
+		return 0;
+	}
+
+	public void setField(int id, int value)
+	{
+	}
+
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	public void clear()
+	{
+		content = null;
 	}
 }
