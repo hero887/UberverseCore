@@ -25,10 +25,15 @@ import com.minecraftuberverse.ubercore.util.DurationRecipe;
 import com.minecraftuberverse.ubercore.util.Recipe;
 import com.minecraftuberverse.ubercore.util.RecipeHandler;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 /**
  * @author Lewis_McReu
@@ -203,4 +208,6 @@ public abstract class TileEntityMachine extends TileEntity implements IUpdatePla
 		super.readFromNBT(compound);
 		this.timeLeft = compound.getInteger(NBTKEY_PROGRESS);
 	}
+
+	public abstract boolean onRightClick(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ);
 }
