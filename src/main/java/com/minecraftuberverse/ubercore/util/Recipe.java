@@ -74,6 +74,16 @@ public class Recipe
 		addOutput(output);
 	}
 
+	public Map<Item, Integer> getInput()
+	{
+		return input;
+	}
+
+	public Map<Item, Integer> getOutput()
+	{
+		return output;
+	}
+
 	public Recipe addInput(Item... items)
 	{
 		for (Item item : items)
