@@ -21,9 +21,9 @@ package com.minecraftuberverse.ubercore.tileentity;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.minecraftuberverse.ubercore.util.DurationRecipe;
-import com.minecraftuberverse.ubercore.util.Recipe;
 import com.minecraftuberverse.ubercore.util.RecipeHandler;
+import com.minecraftuberverse.ubercore.util.recipe.DurationRecipe;
+import com.minecraftuberverse.ubercore.util.recipe.Recipe;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

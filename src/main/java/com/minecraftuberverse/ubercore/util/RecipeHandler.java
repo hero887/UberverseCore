@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import com.minecraftuberverse.ubercore.util.recipe.Recipe;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package com.minecraftuberverse.ubercore.util;
+package com.minecraftuberverse.ubercore.util.recipe;
 
 import net.minecraft.item.Item;
 
